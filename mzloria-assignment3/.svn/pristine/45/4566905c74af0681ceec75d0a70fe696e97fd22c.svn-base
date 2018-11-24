@@ -1,0 +1,98 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author miclo
+ *
+ */
+public class Bicycle extends AbstractVehicle
+{
+    /** The death time of the vehicle. */
+    private static final int DEATH_TIME = 20;
+    
+    public Bicycle(int theX, int theY, Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public boolean canPass(Terrain theTerrain, Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if(cannotPass(theTerrain)) // DO WE NEED THIS IF WE ALREADY CHECK IN COOSEDIRECTION?
+        {
+            vehicleCanPass = false;
+        }
+        if((theTerrain == Terrain.CROSSWALK || theTerrain == Terrain.LIGHT) && (theLight == Light.RED || theLight == Light.YELLOW))
+        {
+            vehicleCanPass = false;
+        }
+        return vehicleCanPass;
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public Direction chooseDirection(Map<Direction, Terrain> theNeighbors)
+    {
+        Direction chosenDir = getDirection();
+        if(theNeighbors.get(getDirection()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection();
+        }
+        else if(theNeighbors.get(getDirection().left()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection().left();
+        }
+        else if(theNeighbors.get(getDirection().right()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection().right();
+        }
+        else
+        {
+            if(theNeighbors.get(getDirection()) == Terrain.STREET || theNeighbors.get(getDirection()) == Terrain.LIGHT || theNeighbors.get(getDirection()) == Terrain.CROSSWALK)
+            {
+                chosenDir = getDirection();
+            }
+            else
+            {
+                if(!cannotPass(theNeighbors.get(getDirection().left())))
+                {
+                    chosenDir = getDirection().left();
+                }
+                else if(!cannotPass(theNeighbors.get(getDirection().right())))
+                {
+                    chosenDir = getDirection().right();
+                }
+                else
+                {
+                    chosenDir = getDirection().reverse();
+                }
+            }
+        }
+        return chosenDir;
+    }
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the truck. 
+     * 
+     * @param theTerrain The terrain that the truck wants to pass through.
+     * @return True if the truck cannot pass; false if the truck can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS;
+    }
+
+}

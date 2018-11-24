@@ -1,0 +1,30 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * @author miclo
+ *
+ */
+public class Bicycle extends AbstractVehicle
+{
+    public Bicycle(int theX, int theY, Direction theDir)
+    {
+        super(theX, theY, theDir);
+    }
+    
+    public boolean canPass(Terrain theTerrain, Light theLight)
+    {
+        return false;
+    }
+    
+    public Direction chooseDirection(Map<Direction, Terrain> theNeighbors)
+    {
+        return Direction.EAST;
+    }
+
+}

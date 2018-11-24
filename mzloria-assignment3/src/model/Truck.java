@@ -1,0 +1,112 @@
+/*
+ * TCSS 305 Autumn 2018
+ * Assignment 3
+ */
+
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Represents a truck. 
+ * 
+ * @author Michael Zachary Loria
+ * @version October 27 2018
+ */
+public final class Truck extends AbstractVehicle
+{
+    // Static Final Field
+    
+    /** The death time of the truck, which is 0 because a truck never dies. */
+    private static final int DEATH_TIME = 0;
+    
+    // Constructor
+    
+    /**
+     * Initializes the fields. 
+     * 
+     * @param theX The x coordinate of the truck.
+     * @param theY The y coordinate of the truck.
+     * @param theDir The direction in which the truck is facing.
+     */
+    public Truck(final int theX, final int theY, final Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+    }
+    
+    // Overridden Methods 
+    
+    /**
+     * Determines whether or not the truck can pass given
+     * the terrain and light conditions. The only situation
+     * where a truck stops is when the terrain is a crosswalk
+     * and the light is color red. The truck ignores yellow
+     * and green crosswalk lights, as well as all traffic
+     * lights.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if (cannotPass(theTerrain))
+        {
+            vehicleCanPass = false;
+        }
+        if (theTerrain == Terrain.CROSSWALK && theLight == Light.RED)
+        {
+            vehicleCanPass = false;
+        }
+        return vehicleCanPass;
+    }
+    
+    /**
+     * The direction in which the truck goes in. The truck
+     * randomly selects whether to go straight, left, or right.
+     * The truck can only go on terrain that is either a street,
+     * crosswalk, or light. If all of those directions cannot
+     * be passed by the truck, the truck will go in reverse.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors)
+    {
+        final List<Direction> possibleDirections = new ArrayList<>();
+        Direction chosenDir = getDirection().reverse();
+        if (!cannotPass(theNeighbors.get(getDirection().left())))
+        {
+            possibleDirections.add(getDirection().left());
+        }
+        if (!cannotPass(theNeighbors.get(getDirection().right())))
+        {
+            possibleDirections.add(getDirection().right());
+        }
+        if (!cannotPass(theNeighbors.get(getDirection())))
+        {
+            possibleDirections.add(getDirection());
+        }
+        if (possibleDirections.size() > 0)
+        {
+            chosenDir = possibleDirections.get(RAND.nextInt(possibleDirections.size()));
+        }
+        return chosenDir;
+    }
+    
+    // Private Helper Method
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the truck. 
+     * 
+     * @param theTerrain The terrain that the truck wants to pass through.
+     * @return True if the truck cannot pass; false if the truck can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS 
+                        || theTerrain == Terrain.TRAIL;
+    }
+}

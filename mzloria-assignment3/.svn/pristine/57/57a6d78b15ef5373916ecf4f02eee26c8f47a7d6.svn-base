@@ -1,0 +1,78 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author miclo
+ *
+ */
+public final class Car extends AbstractVehicle
+{
+    /** The death time of the vehicle. */
+    private static final int DEATH_TIME = 5;
+    
+    public Car(int theX, int theY, Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+    }
+    
+    public boolean canPass(Terrain theTerrain, Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if (cannotPass(theTerrain))// Do we need this if we check in choose direction?
+        {
+            vehicleCanPass = false;
+        }
+        if(theTerrain == Terrain.CROSSWALK)
+        {
+            if(theLight == Light.RED || theLight == Light.YELLOW)
+            {
+                vehicleCanPass = false;
+            }
+        }
+        if(theTerrain == Terrain.LIGHT && theLight == Light.RED)
+        {
+            vehicleCanPass = false;
+        }
+        return vehicleCanPass;
+    }
+    
+    public Direction chooseDirection(Map<Direction, Terrain> theNeighbors)
+    {
+        Direction chosenDir = getDirection();
+        if(cannotPass(theNeighbors.get(chosenDir)))
+        {
+            chosenDir = getDirection().left();
+            if(cannotPass(theNeighbors.get(chosenDir)))
+            {
+                chosenDir = getDirection().right();
+                if(cannotPass(theNeighbors.get(chosenDir)))
+                {
+                    chosenDir = getDirection().reverse();
+                }
+            }
+        }
+        //Does this account for the fact that the car stays still and does
+        //move and does not turn to avoid the light.
+        return chosenDir;
+    }
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the truck. 
+     * 
+     * @param theTerrain The terrain that the truck wants to pass through.
+     * @return True if the truck cannot pass; false if the truck can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS 
+                        || theTerrain == Terrain.TRAIL;
+    }
+
+}

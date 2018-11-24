@@ -1,0 +1,180 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * @author miclo
+ *
+ */
+public abstract class AbstractVehicle implements Vehicle
+{
+    // Static Final Fields
+//are THESE FINAL??
+    // Instance Fields
+
+
+    /** The x coordinate of the vehicle. */
+    private int myX;
+    
+    /** The y coordinate of the vehicle. */
+    private int myY;
+    
+    /** The direction of the vehicle. */
+    private Direction myDir;
+    
+    /** The name of the alive image file of the Vehicle. */
+    private final String myAliveFileName;
+    
+    /** The name of the dead image file of the Vehicle. */
+    private final String myDeadFileName;
+    
+    // Constructor
+    
+    /**
+     * This constructor initializes the instance fields.
+     * 
+     * @param theX The x coordinate of the vehicle.
+     * @param theY The y coordinate of the vehicle.
+     * @param theDir The direction of the vehicle.
+     * @param theAliveFileName The name of the image file for the alive vehicle.
+     * @param theDeadFileName The name of the image file for the dead vehicle.
+     */
+    public AbstractVehicle(final int theX, final int theY, final Direction theDir, 
+                           final String theAliveFileName, final String theDeadFileName)
+    {
+        myX = theX;
+        myY = theY;
+        myDir = theDir;
+        myAliveFileName = theAliveFileName;
+        myDeadFileName = theDeadFileName;
+    }
+
+    @Override
+    public abstract boolean canPass(Terrain theTerrain, Light theLight);
+
+    @Override
+    public abstract Direction chooseDirection(Map<Direction, Terrain> theNeighbors);
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#collide(model.Vehicle)
+     */
+    @Override
+    public void collide(Vehicle theOther)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#getDeathTime()
+     */
+    @Override
+    public int getDeathTime()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#getImageFileName()
+     */
+    @Override
+    public String getImageFileName()
+    {
+        if(isAlive())
+        {
+            return myAliveFileName;
+        }
+        return myDeadFileName;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#getDirection()
+     */
+    @Override
+    public Direction getDirection()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getX()
+    {
+        return myX;
+    }
+
+    @Override
+    public int getY()
+    {
+        return myY;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#isAlive()
+     */
+    @Override
+    public boolean isAlive()
+    {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#poke()
+     */
+    @Override
+    public void poke()
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#reset()
+     */
+    @Override
+    public void reset()
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setDirection(Direction theDir)
+    {
+        myDir = theDir;
+    }
+
+    @Override
+    public void setX(int theX)
+    {
+        myX = theX;
+    }
+
+    @Override
+    public void setY(int theY)
+    {
+        myY = theY;
+
+    }
+
+}

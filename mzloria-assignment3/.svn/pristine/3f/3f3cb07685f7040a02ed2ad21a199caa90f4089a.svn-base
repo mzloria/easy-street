@@ -1,0 +1,131 @@
+/*
+ * TCSS 305 Autumn 2018
+ * Assignment 3
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * Represents a taxi. 
+ * 
+ * @author Michael Zachary Loria
+ * @version October 25 2018
+ */
+public final class Taxi extends AbstractVehicle
+{
+    // Static Final Fields
+    
+    /** The death time of the taxi, which is 10 moves. */
+    private static final int DEATH_TIME = 10;
+    
+    /** The amount of clock cycles the taxi must stay at a red light. */
+    private static final int RED_LIGHT_CLOCK_CYCLE = 3;
+    
+    // Instance Field
+    
+    /** Keeps track of how many clock cycles the taxi has been through at a red light. */
+    private int myClockCycle;
+    
+    // Constructor
+    
+    /**
+     * Initializes the fields. 
+     * 
+     * @param theX The x coordinate of the taxi.
+     * @param theY The y coordinate of the taxi.
+     * @param theDir The direction in which the taxi is facing.
+     */
+    public Taxi(final int theX, final int theY, final Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+        myClockCycle = 0;
+    }
+    
+    // Overridden Methods
+    
+    /**
+     * Determines whether or not the taxi can pass given
+     * the terrain and light conditions. A taxi stops
+     * when the terrain is a light and the color of the
+     * light is red. Taxis ignore yellow and green lights.
+     * Taxis also temporarily stop when the terrain is
+     * a crosswalk and the light is red. A taxi does not
+     * pass a red crosswalk light for 3 clock cycles or
+     * until the crosswalk light turns green (whichever
+     * happens first).
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if (cannotPass(theTerrain))
+        {
+            vehicleCanPass = false;
+        }
+        if (theTerrain == Terrain.LIGHT && theLight == Light.RED)
+        {
+            vehicleCanPass = false;
+        }
+        if (theTerrain == Terrain.CROSSWALK && theLight == Light.RED)
+        {
+            if (myClockCycle == RED_LIGHT_CLOCK_CYCLE)
+            {
+                myClockCycle = 0;
+            }
+            else
+            {
+                myClockCycle++;
+                vehicleCanPass = false;
+            }
+        }
+        return vehicleCanPass;
+    }
+    
+    /**
+     * The direction in which the taxi goes in. The taxi can only
+     * go on terrain that is either a street, crosswalk, or 
+     * light. Taxis will always try to go straight if possible.
+     * If it is not possible, the taxi will try to go left. If
+     * that is not possible, the taxi will try to go right. If
+     * those three directions are not legal, the taxi will turn
+     * around.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors)
+    {
+        Direction chosenDir = getDirection();
+        if (cannotPass(theNeighbors.get(chosenDir)))
+        {
+            chosenDir = getDirection().left();
+            if (cannotPass(theNeighbors.get(chosenDir)))
+            {
+                chosenDir = getDirection().right();
+                if (cannotPass(theNeighbors.get(chosenDir)))
+                {
+                    chosenDir = getDirection().reverse();
+                }
+            }
+        }
+        return chosenDir;
+    }
+    
+    // Private Helper Methods
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the taxi. 
+     * 
+     * @param theTerrain The terrain that the taxi wants to pass through.
+     * @return True if the taxi cannot pass; false if the taxi can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS 
+                        || theTerrain == Terrain.TRAIL;
+    }
+}

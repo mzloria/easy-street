@@ -1,0 +1,105 @@
+/*
+ * TCSS 305 Autumn 2018
+ * Assignment 3
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * Represents a taxi. 
+ * 
+ * @author Michael Zachary Loria
+ * @version October 25 2018
+ */
+public class Taxi extends AbstractVehicle
+{
+    /** The death time of the vehicle. */
+    private static final int DEATH_TIME = 10;
+    
+    /** The amount of clock cycles the taxi must stay at a red light. */
+    private static final int RED_LIGHT_CLOCK_CYCLE = 3;
+    
+    /** Keeps track of how many clock cycles the taxi has been through at a red light. */
+    private int myClockCycle;
+    
+    /**
+     * Initializes the fields. 
+     * 
+     * @param theX The x coordinate of the taxi.
+     * @param theY The y coordinate of the taxi.
+     * @param theDir The direction in which the taxi is facing.
+     */
+    public Taxi(final int theX, final int theY, final Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+        myClockCycle = 0;
+    }
+    
+    /**
+     * The taxi c.....
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if (cannotPass(theTerrain))// Do we need this if we check in choose direction?
+        {
+            vehicleCanPass = false;
+        }
+        if (theTerrain == Terrain.LIGHT && theLight == Light.RED)
+        {
+            vehicleCanPass = false;
+        }
+        if (theTerrain == Terrain.CROSSWALK && theLight == Light.RED)
+        {
+            if (myClockCycle == RED_LIGHT_CLOCK_CYCLE)
+            {
+                myClockCycle = 0;
+            }
+            else
+            {
+                myClockCycle++;
+                vehicleCanPass = false;
+            }
+        }
+        return vehicleCanPass;
+    }
+    
+    /**
+     * afa;sdlfkj.
+     */
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors)
+    {
+        Direction chosenDir = getDirection();
+        if (cannotPass(theNeighbors.get(chosenDir)))
+        {
+            chosenDir = getDirection().left();
+            if (cannotPass(theNeighbors.get(chosenDir)))
+            {
+                chosenDir = getDirection().right();
+                if (cannotPass(theNeighbors.get(chosenDir)))
+                {
+                    chosenDir = getDirection().reverse();
+                }
+            }
+        }
+        return chosenDir;
+    }
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the taxi. 
+     * 
+     * @param theTerrain The terrain that the taxi wants to pass through.
+     * @return True if the taxi cannot pass; false if the taxi can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS 
+                        || theTerrain == Terrain.TRAIL;
+    }
+}

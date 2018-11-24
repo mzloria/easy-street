@@ -1,0 +1,31 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * @author miclo
+ *
+ */
+public final class Atv extends AbstractVehicle
+{
+
+    public Atv(int theX, int theY, Direction theDir)
+    {
+        super(theX, theY, theDir);
+    }
+    
+    public boolean canPass(Terrain theTerrain, Light theLight)
+    {
+        return false;
+    }
+    
+    public Direction chooseDirection(Map<Direction, Terrain> theNeighbors)
+    {
+        return Direction.EAST;
+    }
+
+}

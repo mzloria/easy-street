@@ -1,0 +1,34 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * @author miclo
+ *
+ */
+public class Taxi extends AbstractVehicle
+{
+
+    public static final String ALIVE_FILE_NAME = "taxi.gif";
+    
+    public static final String DEAD_FILE_NAME = "taxi_dead.gif";
+
+    public Taxi(int theX, int theY, Direction theDir)
+    {
+        super(theX, theY, theDir, ALIVE_FILE_NAME, DEAD_FILE_NAME);
+    }
+    
+    public boolean canPass(Terrain theTerrain, Light theLight)
+    {
+        return false;
+    }
+    
+    public Direction chooseDirection(Map<Direction, Terrain> theNeighbors)
+    {
+        return Direction.EAST;
+    }
+}

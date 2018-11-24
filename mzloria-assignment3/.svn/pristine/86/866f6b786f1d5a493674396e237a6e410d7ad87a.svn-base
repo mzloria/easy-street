@@ -1,0 +1,80 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Represents an ATV.
+ * 
+ * @author Michael Zachary Loria
+ * @version October 25 2018
+ */
+public final class Atv extends AbstractVehicle
+{
+    /** The death time of the vehicle. */
+    private static final int DEATH_TIME = 15;
+    
+    /**
+     * Initializes the fields. 
+     * 
+     * @param theX The x coordinate of the Atv.
+     * @param theY The y coordinate of the Atv.
+     * @param theDir The direction in which the Atv is facing.
+     */
+    public Atv(final int theX, final int theY, final Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+    }
+    
+    /**
+     * adfa;dlfkj.
+     */
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if (cannotPass(theTerrain)) // DO WE NEED THIS IF WE ALREADY CHECK IN COOSEDIRECTION?
+        {
+            vehicleCanPass = false;
+        }
+        return vehicleCanPass;
+    }
+    
+    /**
+     * aslkdfja.
+     */
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors)
+    {
+        final List<Direction> possibleDirections = new ArrayList<>();
+        if (!cannotPass(theNeighbors.get(getDirection().left())))
+        {
+            possibleDirections.add(getDirection().left());
+        }
+        if (!cannotPass(theNeighbors.get(getDirection().right())))
+        {
+            possibleDirections.add(getDirection().right());
+        }
+        if (!cannotPass(theNeighbors.get(getDirection())))
+        {
+            possibleDirections.add(getDirection());
+        }
+        return possibleDirections.get(RAND.nextInt(possibleDirections.size()));
+    }
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the truck. 
+     * 
+     * @param theTerrain The terrain that the truck wants to pass through.
+     * @return True if the truck cannot pass; false if the truck can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL;
+    }
+}

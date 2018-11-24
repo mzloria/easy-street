@@ -1,0 +1,179 @@
+/*
+ * TCSS 305 Autumn 2018
+ * Assignment 3
+ */
+
+package model;
+
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * This is the abstract parent class for all vehicles.
+ * 
+ * @author Michael Zachary Loria
+ * @version October 24 2018
+ */
+public abstract class AbstractVehicle implements Vehicle
+{
+    // Static Final Fields
+    
+    /** Random class used for random movements of vehicles. */
+    public static final Random RAND = new Random();
+
+    // Instance Fields
+    
+    /** The x coordinate of the vehicle. */
+    private int myX;
+    
+    /** The y coordinate of the vehicle. */
+    private int myY;
+    
+    /** The direction of the vehicle. */
+    private Direction myDir;
+    
+    /** Initial x coordinate of the vehicle. */
+    private final int myInitialX;
+    
+    /** Initial y coordinate of the vehicle. */
+    private final int myInitialY;
+    
+    /** Initial direction of the vehicle. */
+    private final Direction myInitialDir;
+    
+    // Constructor
+    
+    /**
+     * This constructor initializes the instance fields.
+     * 
+     * @param theX The x coordinate of the vehicle.
+     * @param theY The y coordinate of the vehicle.
+     * @param theDir The direction of the vehicle.
+     */
+    public AbstractVehicle(final int theX, final int theY, final Direction theDir)
+    {
+        myX = theX;
+        myY = theY;
+        myDir = theDir;
+        
+        myInitialX = theX;
+        myInitialY = theY;
+        myInitialDir = theDir;
+
+    }
+
+    @Override
+    public abstract boolean canPass(Terrain theTerrain, Light theLight);
+
+    @Override
+    public abstract Direction chooseDirection(Map<Direction, Terrain> theNeighbors);
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#collide(model.Vehicle)
+     */
+    @Override
+    public void collide(Vehicle theOther)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#getDeathTime()
+     */
+    @Override
+    public int getDeathTime()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#getImageFileName()
+     */
+    @Override
+    public String getImageFileName()
+    {
+        if (isAlive())
+        {
+            return getClass().getSimpleName().toLowerCase() + ".gif";
+        }
+        return getClass().getSimpleName().toLowerCase() + "_dead.gif";
+    }
+
+    @Override
+    public Direction getDirection()
+    {
+        return myDir;
+    }
+
+    @Override
+    public int getX()
+    {
+        return myX;
+    }
+
+    @Override
+    public int getY()
+    {
+        return myY;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#isAlive()
+     */
+    @Override
+    public boolean isAlive()
+    {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see model.Vehicle#poke()
+     */
+    @Override
+    public void poke()
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void reset()
+    {
+        myX = myInitialX;
+        myY = myInitialY;
+        myDir = myInitialDir;
+    }
+
+    @Override
+    public void setDirection(final Direction theDir)
+    {
+        myDir = theDir;
+    }
+
+    @Override
+    public void setX(final int theX)
+    {
+        myX = theX;
+    }
+
+    @Override
+    public void setY(final int theY)
+    {
+        myY = theY;
+
+    }
+
+}

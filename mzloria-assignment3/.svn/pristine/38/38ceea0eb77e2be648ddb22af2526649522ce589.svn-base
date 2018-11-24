@@ -1,0 +1,135 @@
+/*
+ * TCSS 305 Autumn 2018
+ * Assignment 3
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * Represents a bicycle.
+ * 
+ * @author Michael Zachary Loria
+ * @version October 25 2018
+ */
+public final class Bicycle extends AbstractVehicle
+{
+    // Static Final Field
+    
+    /** The death time of the vehicle, which is 20 moves. */
+    private static final int DEATH_TIME = 20;
+    
+    // Constructor
+    
+    /**
+     * Initializes the fields. 
+     * 
+     * @param theX The x coordinate of the bicycle.
+     * @param theY The y coordinate of the bicycle.
+     * @param theDir The direction in which the bicycle is facing.
+     */
+    public Bicycle(final int theX, final int theY, final Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+    }
+    
+    // Overridden Methods
+    
+    /**
+     * Determines whether or not the bicycle can pass given
+     * the terrain and light conditions. If the terrain 
+     * directly in front of the bicycle is a light, and the
+     * light is red or yellow, the bicycle will stop. If the
+     * terrain directly in front of the bicycle is a crosswalk,
+     * and the light is red or yellow, the bicycle will stop.
+     * (However, if the light is red and there is a trail to the
+     * left or right of the bicycle, the bicycle will turn in 
+     * that direction.)
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if (cannotPass(theTerrain))
+        {
+            vehicleCanPass = false;
+        }
+        if ((theTerrain == Terrain.CROSSWALK || theTerrain == Terrain.LIGHT) 
+                        && (theLight == Light.RED || theLight == Light.YELLOW))
+        {
+            vehicleCanPass = false;
+        }
+        return vehicleCanPass;
+    }
+    
+    /**
+     * The direction in which the bicycle goes in. Bicycles
+     * prefer to travel on trails. However, they also can
+     * travel on streets and lights and crosswalks. Bicycles
+     * always go straight ahead if a trail is directly ahead
+     * of it. If there is no trail straight ahead, but there
+     * is a trail to the left or the right, the bicycle will
+     * turn towards the trail and move in that direction. If
+     * there is no trail neighboring the bicycle, the bicycle
+     * will prefer to go straight if the terrain is legal. If
+     * the bicycle cannot go straight, it will turn left. If
+     * it cannot turn left, it will turn right. Lastly, it 
+     * will turn around if no other direction is legal.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors)
+    {
+        final Direction chosenDir;
+        if (theNeighbors.get(getDirection()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection();
+        }
+        else if (theNeighbors.get(getDirection().left()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection().left();
+        }
+        else if (theNeighbors.get(getDirection().right()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection().right();
+        }
+        else
+        {
+            if (!cannotPass(theNeighbors.get(getDirection())))
+            {
+                chosenDir = getDirection();
+            }
+            else if (!cannotPass(theNeighbors.get(getDirection().left())))
+            {
+                chosenDir = getDirection().left();
+            }
+            else if (!cannotPass(theNeighbors.get(getDirection().right())))
+            {
+                chosenDir = getDirection().right();
+            }
+            else
+            {
+                chosenDir = getDirection().reverse();
+            }
+        }
+        return chosenDir;
+    }
+    
+    // Private Helper Method
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the bicycle. 
+     * 
+     * @param theTerrain The terrain that the bicycle wants to pass through.
+     * @return True if the bicycle cannot pass; false if the bicycle can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS;
+    }
+
+}

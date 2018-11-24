@@ -1,0 +1,215 @@
+/*
+ * TCSS 305 Autumn 2018
+ * Assignment 3
+ */
+
+package model;
+
+import java.util.Random;
+
+/**
+ * This is the abstract parent class for all vehicles.
+ * 
+ * @author Michael Zachary Loria
+ * @version October 24 2018
+ */
+public abstract class AbstractVehicle implements Vehicle
+{
+    // Static Final Fields
+    
+    /** Random class used for random movements of vehicles. */
+    public static final Random RAND = new Random();
+
+    // Instance Fields
+    
+    /** The x coordinate of the vehicle. */
+    private int myX;
+    
+    /** The y coordinate of the vehicle. */
+    private int myY;
+    
+    /** The direction of the vehicle. */
+    private Direction myDir;
+    
+    /** Initial x coordinate of the vehicle. */
+    private final int myInitialX;
+    
+    /** Initial y coordinate of the vehicle. */
+    private final int myInitialY;
+    
+    /** Initial direction of the vehicle. */
+    private final Direction myInitialDir;
+    
+    /** The amount of time the vehicle stays dead. */
+    private final int myDeathTime;
+    
+    /** True if the vehicle is alive; false if the vehicle is dead. */
+    private boolean myAlive;
+    
+    /** Amount of updates the vehicle has stayed dead. */
+    private int myDeadTime;
+    
+    // Constructor
+    
+    /**
+     * This constructor initializes the instance fields.
+     * 
+     * @param theX The x coordinate of the vehicle.
+     * @param theY The y coordinate of the vehicle.
+     * @param theDir The direction of the vehicle.
+     * @param theDeathTime The amount of time the vehicle stays dead.
+     */
+    public AbstractVehicle(final int theX, final int theY, final Direction theDir, 
+                           final int theDeathTime)
+    {
+        myX = theX;
+        myY = theY;
+        myDir = theDir;
+        
+        myInitialX = theX;
+        myInitialY = theY;
+        myInitialDir = theDir;
+        
+        myDeathTime = theDeathTime;
+        myAlive = true;
+        myDeadTime = 0;
+    }
+
+    @Override
+    public void collide(final Vehicle theOther)
+    {
+        if (theOther.isAlive() && myAlive && getDeathTime() > theOther.getDeathTime())
+        {
+            myAlive = false;
+            myDeadTime = 1;
+        }
+    }
+
+    @Override
+    public int getDeathTime()
+    {
+        return myDeathTime;
+    }
+
+    @Override
+    public String getImageFileName()
+    {
+        final StringBuilder imageFileName = new StringBuilder(128);
+        imageFileName.append(getClass().getSimpleName().toLowerCase());
+        if (!isAlive())
+        {
+            imageFileName.append("_dead");
+        }
+        imageFileName.append(".gif");
+        return imageFileName.toString();
+    }
+
+    @Override
+    public Direction getDirection()
+    {
+        return myDir;
+    }
+
+    @Override
+    public int getX()
+    {
+        return myX;
+    }
+
+    @Override
+    public int getY()
+    {
+        return myY;
+    }
+
+    @Override
+    public boolean isAlive()
+    {
+        return myAlive;
+    }
+
+    @Override
+    public void poke()
+    {
+        if (!isAlive())
+        {
+            if (myDeadTime == myDeathTime)
+            {
+                myAlive = true;
+                myDeadTime = 0; 
+                setDirection(Direction.random());
+            }
+            else
+            {
+                myDeadTime++;
+            }
+        }
+    }
+
+    @Override
+    public void reset()
+    {
+        myX = myInitialX;
+        myY = myInitialY;
+        myDir = myInitialDir;
+        myAlive = true;
+        myDeadTime = 0;
+    }
+
+    @Override
+    public void setDirection(final Direction theDir)
+    {
+        myDir = theDir;
+    }
+
+    @Override
+    public void setX(final int theX)
+    {
+        myX = theX;
+    }
+
+    @Override
+    public void setY(final int theY)
+    {
+        myY = theY;
+    }
+    
+    /**
+     * Returns a string representation of the vehicle,
+     * including information about the class of the
+     * vehicle, the location of the vehicle, its alive
+     * status, and how many rounds it has been dead.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString()
+    {
+        final StringBuilder sb = new StringBuilder(128);
+        sb.append(getClass().getSimpleName());
+        sb.append(", Location: (");
+        sb.append(myX);
+        sb.append(",");
+        sb.append(myY);
+        sb.append("), ");
+        
+        if (!isAlive())
+        {
+            sb.append("Alive: No. Been Dead for ");
+            sb.append(myDeadTime);
+            if (myDeadTime == 1)
+            {
+                sb.append(" Move.");
+            }
+            else
+            {
+                sb.append(" Moves.");
+            }
+        }
+        else
+        {
+            sb.append("Alive: Yes.");
+        }
+        return sb.toString();    
+    }
+}

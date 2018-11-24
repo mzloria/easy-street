@@ -1,0 +1,108 @@
+/**
+ * 
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * Represents a bicycle.
+ * 
+ * @author Michael Zachary Loria
+ * @version October 25 2018
+ */
+public class Bicycle extends AbstractVehicle
+{
+    /** The death time of the vehicle. */
+    private static final int DEATH_TIME = 20;
+    
+    /**
+     * Initializes the fields. 
+     * 
+     * @param theX The x coordinate of the bicycle.
+     * @param theY The y coordinate of the bicycle.
+     * @param theDir The direction in which the bicycle is facing.
+     */
+    public Bicycle(final int theX, final int theY, final Direction theDir)
+    {
+        super(theX, theY, theDir, DEATH_TIME);
+    }
+    
+    /**
+     * asdfa.
+     */
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight)
+    {
+        boolean vehicleCanPass = true;
+        if (cannotPass(theTerrain)) // DO WE NEED THIS IF WE ALREADY CHECK IN COOSEDIRECTION?
+        {
+            vehicleCanPass = false;
+        }
+        if ((theTerrain == Terrain.CROSSWALK || theTerrain == Terrain.LIGHT) 
+                        && (theLight == Light.RED || theLight == Light.YELLOW))
+        {
+            vehicleCanPass = false;
+        }
+        return vehicleCanPass;
+    }
+    
+    /**
+     * asfasdf.
+     */
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors)
+    {
+        Direction chosenDir = getDirection();
+        if (theNeighbors.get(getDirection()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection();
+        }
+        else if (theNeighbors.get(getDirection().left()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection().left();
+        }
+        else if (theNeighbors.get(getDirection().right()) == Terrain.TRAIL)
+        {
+            chosenDir = getDirection().right();
+        }
+        else
+        {
+            if (theNeighbors.get(getDirection()) == Terrain.STREET 
+                            || theNeighbors.get(getDirection()) == Terrain.LIGHT 
+                            || theNeighbors.get(getDirection()) == Terrain.CROSSWALK)
+            {
+                chosenDir = getDirection();
+            }
+            else
+            {
+                if (!cannotPass(theNeighbors.get(getDirection().left())))
+                {
+                    chosenDir = getDirection().left();
+                }
+                else if (!cannotPass(theNeighbors.get(getDirection().right())))
+                {
+                    chosenDir = getDirection().right();
+                }
+                else
+                {
+                    chosenDir = getDirection().reverse();
+                }
+            }
+        }
+        return chosenDir;
+    }
+    
+    /**
+     * Determines whether the given terrain cannot be passed by the truck. 
+     * 
+     * @param theTerrain The terrain that the truck wants to pass through.
+     * @return True if the truck cannot pass; false if the truck can pass.
+     */
+    private boolean cannotPass(final Terrain theTerrain)
+    {
+        return theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS;
+    }
+
+}
